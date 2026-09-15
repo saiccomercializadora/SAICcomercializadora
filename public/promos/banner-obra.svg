@@ -1,0 +1,24 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="40" fill="url(#paint0_linear_1_2)"/>
+  <circle cx="1020" cy="180" r="160" fill="#F1C85A" fill-opacity="0.35"/>
+  <circle cx="180" cy="620" r="220" fill="#1F2937" fill-opacity="0.2"/>
+  <rect x="90" y="110" width="420" height="480" rx="28" fill="#F6F3EE" fill-opacity="0.18" stroke="#F6F3EE" stroke-opacity="0.35"/>
+  <path d="M160 452V248H242C293 248 330 278 330 323C330 367 294 397 243 397H208V452H160ZM208 366H239C268 366 286 352 286 323C286 293 268 279 239 279H208V366Z" fill="#F8FAFC"/>
+  <path d="M372 248H406V452H372V248Z" fill="#F1C85A"/>
+  <path d="M440 248H474V452H440V248Z" fill="#F1C85A"/>
+  <path d="M519 170H604V452H519V170Z" fill="white" fill-opacity="0.85"/>
+  <path d="M625 170H710V452H625V170Z" fill="#F1C85A" fill-opacity="0.9"/>
+  <rect x="760" y="200" width="260" height="60" rx="18" fill="#F8FAFC" fill-opacity="0.92"/>
+  <rect x="760" y="290" width="320" height="28" rx="14" fill="#F8FAFC" fill-opacity="0.7"/>
+  <rect x="760" y="338" width="290" height="28" rx="14" fill="#F8FAFC" fill-opacity="0.5"/>
+  <rect x="760" y="386" width="220" height="28" rx="14" fill="#F8FAFC" fill-opacity="0.35"/>
+  <text x="760" y="560" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700">PROMOCIÓN SAIC</text>
+  <text x="760" y="610" fill="#F1C85A" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">Asesoría premium para obra y remodelación</text>
+  <defs>
+    <linearGradient id="paint0_linear_1_2" x1="85" y1="48" x2="1090" y2="678" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="0.55" stop-color="#1F2937"/>
+      <stop offset="1" stop-color="#6B7280"/>
+    </linearGradient>
+  </defs>
+</svg>
