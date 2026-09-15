@@ -33,3 +33,45 @@ export async function shopifyFetch<T>(query: string, variables?: Record<string, 
 
   return data.data as T;
 }
+
+const cartCreateMutation = `
+  mutation CartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        checkoutUrl
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+type ShopifyCartCreateResponse = {
+  cartCreate: {
+    cart: { checkoutUrl: string } | null;
+    userErrors: Array<{ field?: string[]; message: string }>;
+  };
+};
+
+export async function createShopifyCart(lines: Array<{ merchandiseId: string; quantity: number }>) {
+  const data = await shopifyFetch<ShopifyCartCreateResponse>(cartCreateMutation, {
+    input: { lines },
+  });
+
+  if (!data) {
+    throw new Error("Shopify Storefront API is not configured");
+  }
+
+  const { cart, userErrors } = data.cartCreate;
+  if (userErrors.length) {
+    throw new Error(userErrors.map((error) => error.message).join(", "));
+  }
+
+  if (!cart?.checkoutUrl) {
+    throw new Error("Shopify did not return a checkout URL");
+  }
+
+  return cart.checkoutUrl;
+}

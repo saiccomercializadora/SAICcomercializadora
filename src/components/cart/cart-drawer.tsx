@@ -4,7 +4,23 @@ import Link from "next/link";
 import { useCart } from "@/components/cart/cart-context";
 
 export function CartDrawer() {
-  const { items, subtotal, itemCount, removeItem, updateQuantity, checkoutUrl } = useCart();
+  const {
+    items,
+    subtotal,
+    itemCount,
+    removeItem,
+    updateQuantity,
+    checkoutUrl,
+    createCheckout,
+    checkoutLoading,
+    checkoutError,
+  } = useCart();
+
+  const handleCheckout = async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const url = checkoutUrl || (await createCheckout());
+    if (url) window.location.assign(url);
+  };
 
   if (!items.length) {
     return (
@@ -84,11 +100,14 @@ export function CartDrawer() {
 
         <div className="mt-5 flex flex-col gap-3">
           <a
-            href={checkoutUrl}
+            href={checkoutUrl || "#"}
+            onClick={handleCheckout}
+            aria-busy={checkoutLoading}
             className="rounded-full bg-zinc-900 px-5 py-3 text-center font-semibold text-white transition hover:bg-zinc-700"
           >
-            Ir al checkout
+            {checkoutLoading ? "Creando checkout..." : "Ir al checkout"}
           </a>
+          {checkoutError ? <p className="text-sm text-red-600">{checkoutError}</p> : null}
           <a
             href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""}?text=${encodeURIComponent(`Hola, quiero consultar sobre los siguientes productos: ${items.map((item) => item.title).join(", ")}. Quisiera información sobre disponibilidad y precio.`)}`}
             target="_blank"

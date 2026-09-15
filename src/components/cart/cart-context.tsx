@@ -20,7 +20,10 @@ type CartContextValue = {
   updateQuantity: (variantId: string, quantity: number) => void;
   removeItem: (variantId: string) => void;
   clearCart: () => void;
-  checkoutUrl: string;
+  checkoutUrl: string | null;
+  createCheckout: () => Promise<string | null>;
+  checkoutLoading: boolean;
+  checkoutError: string | null;
 };
 
 const STORAGE_KEY = "sait-storefront-cart";
@@ -101,17 +104,47 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [items],
   );
 
-  const shopDomain =
-    process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || DEFAULT_STORE_DOMAIN;
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  const checkoutUrl = useMemo(() => {
-    const cartString = items
-      .map((item) => `${item.variantId}:${item.quantity}`)
-      .join(",");
+  useEffect(() => {
+    setCheckoutUrl(null);
+    setCheckoutError(null);
+  }, [items]);
 
-    if (!cartString) return `https://${shopDomain}/cart`;
-    return `https://${shopDomain}/cart/${cartString}`;
-  }, [items, shopDomain]);
+  const createCheckout = async () => {
+    if (!items.length || checkoutLoading) return checkoutUrl;
+
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+
+    try {
+      const response = await fetch("/api/shopify/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: items.map((item) => ({
+            merchandiseId: item.variantId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+      const data = (await response.json()) as { checkoutUrl?: string; error?: string };
+
+      if (!response.ok || !data.checkoutUrl) {
+        throw new Error(data.error || "No se pudo crear el checkout de Shopify");
+      }
+
+      setCheckoutUrl(data.checkoutUrl);
+      return data.checkoutUrl;
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "No se pudo crear el checkout");
+      return null;
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   const value = useMemo<CartContextValue>(
     () => ({
@@ -123,8 +156,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeItem,
       clearCart,
       checkoutUrl,
+      createCheckout,
+      checkoutLoading,
+      checkoutError,
     }),
-    [items, itemCount, subtotal, checkoutUrl],
+    [items, itemCount, subtotal, checkoutUrl, checkoutLoading, checkoutError],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
